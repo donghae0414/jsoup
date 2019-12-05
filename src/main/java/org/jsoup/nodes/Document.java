@@ -381,6 +381,11 @@ public class Document extends Element {
         private boolean outline = false;
         private int indentAmount = 1;
         private Syntax syntax = Syntax.html;
+        
+        /**
+         * TODO: Apply CSS style flag
+         */
+        private boolean globalCSS = false;
 
         public OutputSettings() {
             charset(Charset.forName("UTF8"));
