@@ -1,9 +1,11 @@
 package org.jsoup;
 
 import org.jsoup.nodes.Document;
+import org.jsoup.parser.CssParser;
 import org.jsoup.parser.Parser;
 import org.jsoup.safety.Cleaner;
 import org.jsoup.safety.Whitelist;
+import org.jsoup.style.Styler;
 import org.jsoup.helper.DataUtil;
 import org.jsoup.helper.HttpConnection;
 
@@ -11,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Map;
 
 /**
  The core public access point to the jsoup functionality.
@@ -184,6 +187,16 @@ public class Jsoup {
     }
 
     /**
+     * TODO: parse css styles, and apply on each nodes. 
+     */
+    public static Document applyExternalStyle(Document doc) {
+        Map<String, String> cssRules = CssParser.parse(doc);
+        Styler styler = new Styler(cssRules);
+        Document styledDoc = styler.applyStyle(doc);
+        return styledDoc;
+    }
+
+    /**
      Get safe HTML from untrusted input HTML, by parsing input HTML and filtering it through a white-list of permitted
      tags and attributes.
 
@@ -200,6 +213,7 @@ public class Jsoup {
         Document clean = cleaner.clean(dirty);
         return clean.body().html();
     }
+
 
     /**
      Get safe HTML from untrusted input HTML, by parsing input HTML and filtering it through a white-list of permitted
