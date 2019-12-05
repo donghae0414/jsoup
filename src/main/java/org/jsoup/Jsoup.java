@@ -187,8 +187,7 @@ public class Jsoup {
      * TODO: parse css styles, and apply on each nodes. 
      */
     public static Document applyExternalStyle(Document doc) {
-        
-        return null;
+        return doc;
     }
 
     /**
