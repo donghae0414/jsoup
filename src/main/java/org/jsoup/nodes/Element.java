@@ -1405,6 +1405,17 @@ public class Element extends Node {
         return styles;
     }
 
+    /**
+     * add style
+     */
+    public void applyStyle(String style) {
+        if (styles == null) {
+            styles = new ArrayList<>();
+        }
+
+        styles.add(style);
+    }
+
     void outerHtmlHead(final Appendable accum, int depth, final Document.OutputSettings out) throws IOException {
         if (out.prettyPrint() && (tag.formatAsBlock() || (parent() != null && parent().tag().formatAsBlock()) || out.outline())) {
             if (accum instanceof StringBuilder) {

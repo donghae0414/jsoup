@@ -1,13 +1,12 @@
 package org.jsoup.style;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.jsoup.helper.Validate;
-import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
-import org.jsoup.nodes.TextNode;
 import org.jsoup.select.NodeTraversor;
 import org.jsoup.select.NodeVisitor;
 
@@ -32,11 +31,10 @@ public class Styler {
     public Document applyStyle(Document nakedDocument) {
         Validate.notNull(nakedDocument);
 
-        Document clean = Document.createShell(nakedDocument.baseUri());
-        if (nakedDocument.body() != null) // frameset documents won't have a body. the clean doc will have empty body.
-            copyStyledNodes(nakedDocument.body(), clean.body());
+        Document styled = Document.createShell(nakedDocument.baseUri());
+        copyStyledNodes(nakedDocument.head().parent(), styled.head().parent());
 
-        return clean;
+        return styled;
     }
 
     /**
@@ -53,13 +51,26 @@ public class Styler {
 
         public void head(Node source, int depth) {
             if (source instanceof Element) {
-                // TODO: implement
-            } else { }
+                Element elem = (Element) source;
+                Set<String> keys = rules.keySet();
+                for (String key: keys) {
+                    if(elem.is(key)) {
+                        elem.applyStyle(rules.get(key));
+                    }
+                }
+
+                if (destination != root && elem.hasParent()) {
+                    destination.appendChild(elem);
+                    destination = elem;
+                }
+            } else {
+                destination.appendChild(source);
+            }
         }
 
         public void tail(Node source, int depth) {
             if (source instanceof Element) {
-                // TODO: implement
+                destination = destination.parent(); // would have descended, so pop destination stack
             }
         }
     }
