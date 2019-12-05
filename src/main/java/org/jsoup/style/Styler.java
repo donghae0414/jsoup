@@ -43,7 +43,6 @@ public class Styler {
      Iterates the input and copies styled tags (tags, attributes, text) into the destination.
      */
     private final class StylingVisitor implements NodeVisitor {
-        private int numApplied;
         private final Element root;
         private Element destination; // current element to append nodes to
 
@@ -55,16 +54,7 @@ public class Styler {
         public void head(Node source, int depth) {
             if (source instanceof Element) {
                 // TODO: implement
-
-            } else if (source instanceof TextNode) {
-                // TODO: implement
-
-            } else if (source instanceof DataNode) {
-                // TODO: implement
-
-            } else { 
-                numApplied++;// TODO: implement
-            }
+            } else { }
         }
 
         public void tail(Node source, int depth) {
@@ -74,9 +64,8 @@ public class Styler {
         }
     }
 
-    private int copyStyledNodes(Element source, Element dest) {
+    private void copyStyledNodes(Element source, Element dest) {
         StylingVisitor StylingVisitor = new StylingVisitor(source, dest);
         NodeTraversor.traverse(StylingVisitor, source);
-        return StylingVisitor.numApplied;
     }
 }
