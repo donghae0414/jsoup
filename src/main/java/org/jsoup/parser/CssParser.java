@@ -31,7 +31,6 @@ public class CssParser {
 		return styles.get(property);
 	}
 	
-
 	public static HashMap<String, String> parse(Document doc) {
 		if (document != null && document.equals(doc))
 			return styles;
@@ -52,23 +51,8 @@ public class CssParser {
 				try {
 					Document cssDoc = Jsoup.connect(cssUrl).get();
 					String cssBody = cssDoc.body().text();
-
-					StringTokenizer styleTokenizer = new StringTokenizer(cssBody, "}");
-					while (styleTokenizer.hasMoreTokens()) {
-						String token = styleTokenizer.nextToken();
-						StringTokenizer nameStyleTokenizer = new StringTokenizer(token, "{");
-						if (nameStyleTokenizer.countTokens() != 2)
-							continue;
-						
-						String property = nameStyleTokenizer.nextToken();
-						if (property.contains(";")) {
-							int idx = property.indexOf(';');
-							property = property.substring(idx + 1);
-						}
-						String style = nameStyleTokenizer.nextToken();
-						
-						styles.put(property, style);
-					}
+					
+					addStyles(cssBody);
 					
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -80,11 +64,30 @@ public class CssParser {
 		Elements allElements = doc.getAllElements();
 		for (Element element : allElements) {
 			if (element.hasAttr("style")) {
-				styles.put(element.tagName(), element.attr("style"));
+				styles.put(element.cssSelector(), element.attr("style"));
 			}
 		}
 		
 		return styles;
+	}
+
+	private static void addStyles(String cssBody) {
+		StringTokenizer styleTokenizer = new StringTokenizer(cssBody, "}");
+		while (styleTokenizer.hasMoreTokens()) {
+			String token = styleTokenizer.nextToken();
+			StringTokenizer nameStyleTokenizer = new StringTokenizer(token, "{");
+			if (nameStyleTokenizer.countTokens() != 2)
+				continue;
+			
+			String property = nameStyleTokenizer.nextToken();
+			if (property.contains(";")) {
+				int idx = property.indexOf(';');
+				property = property.substring(idx + 1);
+			}
+			String style = nameStyleTokenizer.nextToken();
+			
+			styles.put(property, style);
+		}
 	}
 	
 	
