@@ -184,6 +184,14 @@ public class Jsoup {
     }
 
     /**
+     * TODO: parse css styles, and apply on each nodes. 
+     */
+    public static Document applyExternalStyle(Document doc) {
+        
+        return null;
+    }
+
+    /**
      Get safe HTML from untrusted input HTML, by parsing input HTML and filtering it through a white-list of permitted
      tags and attributes.
 
@@ -200,6 +208,7 @@ public class Jsoup {
         Document clean = cleaner.clean(dirty);
         return clean.body().html();
     }
+
 
     /**
      Get safe HTML from untrusted input HTML, by parsing input HTML and filtering it through a white-list of permitted

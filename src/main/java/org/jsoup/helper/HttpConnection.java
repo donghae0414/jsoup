@@ -835,11 +835,6 @@ public class HttpConnection implements Connection {
             }
             Validate.isFalse(inputStreamRead, "Input stream already read and parsed, cannot re-read.");
             Document doc = DataUtil.parseInputStream(bodyStream, charset, url.toExternalForm(), req.parser());
-
-            /**
-             * TODO: parse css styles, and apply on each nodes. 
-             */
-
             charset = doc.outputSettings().charset().name(); // update charset from meta-equiv, possibly
             inputStreamRead = true;
             safeClose();
