@@ -1,4 +1,5 @@
 package org.jsoup.styler;
+
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
@@ -23,13 +24,12 @@ import org.junit.Test;
         rules.put(selector, attribute);
 
         List<String> expected = new ArrayList<>();
-        expected.add("font-size:12px;font-family:Dotum,'돋움',Helvetica,\"Apple SD Gothic Neo\",sans-serif");
+        expected.add("font-size:12px;font-family:Dotum,Helvetica,\"Apple SD Gothic Neo\",sans-serif");
 
-        String h = "<div><style>div,button,input,select,table,textarea { font-size:12px;font-family:Dotum,'돋움',Helvetica,\"Apple SD Gothic Neo\",sans-serif }</style><p class=foo><a href='http://evil.com'>Hello <button id=bar>there</button>!</a></div>";
+        String h = "<div style='font-size:12px;font-family:Dotum,Helvetica,\"Apple SD Gothic Neo\",sans-serif'><p class=foo><a href='http://evil.com'>Hello <button id=bar>there</button>!</a></p></div>";
         Document nakedHtml = Jsoup.parse(h);
         Document styledHtml = Jsoup.applyExternalStyle(nakedHtml);
-        System.out.println(styledHtml.getElementsByTag("div"));
         assertEquals(1, styledHtml.getElementsByTag("div").first().getAppliedStyle().size());
-        assertEquals(expected, styledHtml.getElementsByTag("div").first().getAppliedStyle().get(0));
+        assertEquals(expected.toString(), styledHtml.getElementsByTag("div").first().getAppliedStyle().toString());
     }
 }
