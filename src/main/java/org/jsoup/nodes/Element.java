@@ -45,6 +45,7 @@ public class Element extends Node {
     List<Node> childNodes;
     private Attributes attributes;
     private String baseUri;
+    private List<String> styles;
 
     /**
      * Create a new, standalone element.
@@ -70,6 +71,7 @@ public class Element extends Node {
         this.baseUri = baseUri;
         this.attributes = attributes;
         this.tag = tag;
+        this.styles = null;
     }
     
     /**
@@ -1391,6 +1393,16 @@ public class Element extends Node {
         else
             attr("value", value);
         return this;
+    }
+
+    /**
+     * Get the styles
+     */
+    public List<String> getAppliedStyle() {
+        if (styles == null)
+            return new ArrayList<>();
+        
+        return styles;
     }
 
     void outerHtmlHead(final Appendable accum, int depth, final Document.OutputSettings out) throws IOException {
