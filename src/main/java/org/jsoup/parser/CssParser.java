@@ -11,7 +11,7 @@ import org.jsoup.select.Elements;
 
 public class CssParser {
 	
-	private static Document document;
+	private static Document cloneDocument;
 	private static HashMap<String, String> styles = new HashMap<>();
 	
 	static final String[] inheritedStyles = { "border-collapse","border-spacing","caption-side","color","cursor"
@@ -31,15 +31,16 @@ public class CssParser {
 		return styles.get(property);
 	}
 	
-	public static HashMap<String, String> parse(Document doc) {
-		if (document != null && document.equals(doc))
+	public static HashMap<String, String> parse(Document target) {
+		if (cloneDocument != null && cloneDocument.equals(target))
 			return styles;
 		
-		document = doc.clone();
+		// document = doc.clone();
+		cloneDocument = target.clone();
 		styles.clear();
 		
 		// get css styles from stylesheet link
-		Elements cssLinks = doc.getElementsByTag("link");
+		Elements cssLinks = target.getElementsByTag("link");
 		for (Element cssLink : cssLinks) {
 			if (cssLink.attr("rel").equals("stylesheet")) {
 				String cssFilePath = cssLink.attr("href");
@@ -47,21 +48,26 @@ public class CssParser {
 				if (cssFilePath.startsWith("http"))
 					cssUrl = cssFilePath;
 				else
-					cssUrl = "https://" + doc.baseUri() + cssFilePath;
+					cssUrl = "https://" + target.baseUri() + cssFilePath;
 				try {
 					Document cssDoc = Jsoup.connect(cssUrl).get();
 					String cssBody = cssDoc.body().text();
 					
 					addStyles(cssBody);
-					
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		
+
+		// get styles from tags
+		Elements styleTags = target.getElementsByTag("style");
+		for (Element styleTag : styleTags) {
+			addStyles(styleTag.data());
+		}
+
 		// get inline styles from document
-		Elements allElements = doc.getAllElements();
+		Elements allElements = target.getAllElements();
 		for (Element element : allElements) {
 			if (element.hasAttr("style")) {
 				styles.put(element.cssSelector(), element.attr("style"));
@@ -75,20 +81,18 @@ public class CssParser {
 		StringTokenizer styleTokenizer = new StringTokenizer(cssBody, "}");
 		while (styleTokenizer.hasMoreTokens()) {
 			String token = styleTokenizer.nextToken();
-			StringTokenizer nameStyleTokenizer = new StringTokenizer(token, "{");
-			if (nameStyleTokenizer.countTokens() != 2)
+			StringTokenizer propertyTokenizer = new StringTokenizer(token, "{");
+			if (propertyTokenizer.countTokens() != 2)
 				continue;
 			
-			String property = nameStyleTokenizer.nextToken();
+			String property = propertyTokenizer.nextToken();
 			if (property.contains(";")) {
 				int idx = property.indexOf(';');
 				property = property.substring(idx + 1);
 			}
-			String style = nameStyleTokenizer.nextToken();
-			
-			styles.put(property, style);
+
+			String style = propertyTokenizer.nextToken();
+			styles.put(property.trim(), style.trim());
 		}
-	}
-	
-	
+	}	
 }
