@@ -81,20 +81,18 @@ public class CssParser {
 		StringTokenizer styleTokenizer = new StringTokenizer(cssBody, "}");
 		while (styleTokenizer.hasMoreTokens()) {
 			String token = styleTokenizer.nextToken();
-			StringTokenizer nameStyleTokenizer = new StringTokenizer(token, "{");
-			if (nameStyleTokenizer.countTokens() != 2)
+			StringTokenizer propertyTokenizer = new StringTokenizer(token, "{");
+			if (propertyTokenizer.countTokens() != 2)
 				continue;
 			
-			String property = nameStyleTokenizer.nextToken();
+			String property = propertyTokenizer.nextToken();
 			if (property.contains(";")) {
 				int idx = property.indexOf(';');
 				property = property.substring(idx + 1);
 			}
-			String style = nameStyleTokenizer.nextToken();
-			
-			styles.put(property, style);
+
+			String style = propertyTokenizer.nextToken();
+			styles.put(property.trim(), style.trim());
 		}
-	}
-	
-	
+	}	
 }
